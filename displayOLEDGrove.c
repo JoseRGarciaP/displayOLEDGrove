@@ -387,6 +387,8 @@ int main(int argc, char *argv[]) {
 		
 		printf("'EXIT' to finish, other to print... \n");
 		scanf("%s", str);
+		
+		clearDisplay();
 	}
 	
 	return 0;
