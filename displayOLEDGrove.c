@@ -149,10 +149,27 @@ const unsigned char BasicFont[][8] PROGMEM=
 };
 
 
+#define COMMAND_MODE 0x80
+// cmd will be a hex code specifying a command defined in the
+// display’s datasheet
+void sendCommand(unsigned char cmd) {
+	
+	char buf[2];
+	buf[0] = COMMAND_MODE;
+	buf[1] = cmd;
+	int result = write(i2c_fd, buf, 2);
+	
+	if(result != 2) {
+		
+		printf("Unable to write to i2c register\n");
+		exit(-1);
+	}
+}
+
 
 void init() {
 	
-	sendCommand(0xFD); // Unlock OLED driver IC MCU interface from entering command. i.e: Accept commands
+    sendCommand(0xFD); // Unlock OLED driver IC MCU interface from entering command. i.e: Accept commands
     sendCommand(0x12);
     sendCommand(0xAE); // Set display off
     sendCommand(0xA8); // set multiplex ratio
@@ -201,22 +218,6 @@ void init() {
     grayL= 0x0F;
 }
 
-	#define COMMAND_MODE 0x80
-// cmd will be a hex code specifying a command defined in the
-// display’s datasheet
-void sendCommand(unsigned char cmd) {
-	
-	char buf[2];
-	buf[0] = COMMAND_MODE;
-	buf[1] = cmd;
-	int result = write(i2c_fd, buf, 2);
-	
-	if(result != 2) {
-		
-		printf("Unable to write to i2c register\n");
-		exit(-1);
-	}
-}
 
 
 void setContrastLevel(unsigned char ContrastLevel) {
@@ -266,20 +267,6 @@ void setTextXY(unsigned char Row, unsigned char Column) {
 	
 }
 
-
-void clearDisplay() {
-	
-	unsigned char i,j;
-	
-	for(j=0;j<48;j++)
-    {
-        for(i=0;i<96;i++)  //clear all columns
-        {
-            sendData(0x00);
-        }
-    }
-}
-
 #define DATA_MODE 0x40
 // c will contain the data you wish to display
 void sendData(unsigned char c) {
@@ -294,6 +281,19 @@ void sendData(unsigned char c) {
 		printf("Error sending data...\n");
 		exit(-1);
 	}
+}
+
+void clearDisplay() {
+	
+	unsigned char i,j;
+	
+	for(j=0;j<48;j++)
+    {
+        for(i=0;i<96;i++)  //clear all columns
+        {
+            sendData(0x00);
+        }
+    }
 }
 
 
@@ -319,8 +319,8 @@ void putChar(unsigned char C) {
 			
             // Character is constructed two pixel at a time using vertical mode from the default 8x8 font
             char c=0x00;
-            char bit1=(pgm_read_byte(&BasicFont[C-32][i]) >> j)  & 0x01;  
-            char bit2=(pgm_read_byte(&BasicFont[C-32][i+1]) >> j) & 0x01;
+            char bit1=(pgm_read_byte(BasicFont[C-32][i]) >> j)  & 0x01;  
+            char bit2=(pgm_read_byte(BasicFont[C-32][i+1]) >> j) & 0x01;
            // Each bit is changed to a nibble
             c|=(bit1)?grayH:0x00;
             c|=(bit2)?grayL:0x00;
