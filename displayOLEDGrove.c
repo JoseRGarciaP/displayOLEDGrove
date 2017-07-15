@@ -33,9 +33,10 @@
 #define Scroll_128Frames        0x2
 #define Scroll_256Frames        0x3
 
-
 int i2c_fd;
 
+unsigned char grayH;
+unsigned char grayL;
 
 #if defined(__arm__) && !defined(PROGMEM)
   #define PROGMEM
@@ -310,11 +311,12 @@ void putChar(unsigned char C) {
     {
         C=' '; //Space
     }
-	
-	for(char i=0;i<8;i=i+2)
-    {
-        for(char j=0;j<8;j++)
-        {
+	char i;
+	for(i=0;i<8;i=i+2) {
+		
+		char j;
+        for(j=0;j<8;j++) {
+			
             // Character is constructed two pixel at a time using vertical mode from the default 8x8 font
             char c=0x00;
             char bit1=(pgm_read_byte(&BasicFont[C-32][i]) >> j)  & 0x01;  
@@ -372,8 +374,8 @@ int main(int argc, char *argv[]) {
 	init();
 	clearDisplay();
 	setVerticalMode();
-	
-	for (int i = 0; i < 12; i++) {
+	int i;
+	for (i = 0; i < 12; i++) {
 		
 		setTextXY(i,0);
 		setGrayLevel(i);
