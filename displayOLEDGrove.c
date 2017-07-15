@@ -200,7 +200,6 @@ void init() {
     sendCommand(0xA4); // Set Normal Display Mode
     sendCommand(0x2E); // Deactivate Scroll
     sendCommand(0xAF); // Switch on display
-    delay(100);
 
     // Row Address
     sendCommand(0x75);    // Set Row Address 
