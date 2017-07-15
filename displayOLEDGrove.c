@@ -373,12 +373,20 @@ int main(int argc, char *argv[]) {
 	init();
 	clearDisplay();
 	setVerticalMode();
-	int i;
-	for (i = 0; i < 12; i++) {
+	
+	char str[10];
+	
+	printf("'EXIT' to finish, other to print... \n");
+	scanf("%s", str);
+
+	while (strcmp(str, "EXIT") != 0) {
 		
-		setTextXY(i,0);
-		setGrayLevel(i);
-		putString("hello world");
+		setTextXY(3,0);
+		setGrayLevel(11);
+		putString(str);
+		
+		printf("'EXIT' to finish, other to print... \n");
+		scanf("%s", str);
 	}
 	
 	return 0;
